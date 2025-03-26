@@ -6,7 +6,7 @@ Ejemplo. Entrada: 0. Salida: 0.
 '''
 
 def absoluto(a):
-    return a if a  >= 0 else -a
+    return a if a  >= 0 else -a #expresion condicional
 
 #valores de entrada
 numA = -17 

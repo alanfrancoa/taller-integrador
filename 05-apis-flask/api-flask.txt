@@ -1,0 +1,53 @@
+Uso de APIs en Python con Flask
+Arquitectura Cliente-Servidor
+
+En aplicaciones modernas, generalmente usamos la estructura Cliente-Servidor:
+
+    Servidor: Es una API REST que:
+
+        Procesa la lógica de negocio
+
+        Se conecta con bases de datos
+
+        Devuelve información estructurada
+
+    Cliente: Consume la API, puede ser:
+
+        Una aplicación web
+
+        Una aplicación móvil
+
+        Otro servicio backend
+
+Comunicación entre Cliente y Servidor
+
+La comunicación sigue este flujo:
+
+    El cliente hace solicitudes (requests) usando protocolos HTTP:
+
+        GET: Obtener datos
+
+        POST: Crear datos
+
+        PUT/PATCH: Actualizar datos
+
+        DELETE: Eliminar datos
+
+    El servidor procesa la solicitud y devuelve una respuesta (response)
+
+    Ambos intercambian información usando JSON (JavaScript Object Notation)
+
+Flask para crear APIs
+
+Flask es un framework minimalista de Python ideal para crear APIs:
+Ventajas de Flask:
+
+✅ Flexibilidad para estructurar tu aplicación
+✅ Ligero y simple de usar
+✅ Ideal para proyectos pequeños y medianos
+✅ Gran comunidad y extensibilidad
+Instalación
+
+Para instalar Flask, ejecuta en tu terminal:
+
+pip install flask

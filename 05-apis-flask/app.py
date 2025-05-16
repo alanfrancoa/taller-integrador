@@ -4,6 +4,8 @@ from flask import Flask, request
 # __name__ es una variable que viene con FLASK, esta variable va a contener la ubicación del archivo donde estamos parado y se está ejecutando. 
 app = Flask(__name__)
 
+personas = []
+
 # Especificamos la ruta donde se va a ejecutar la lógica. Si usamos '/' esto quiere decir que es la ruta principal. 
 @app.route('/')
 def get_hola():
@@ -50,6 +52,41 @@ def multiplicar(numero):
 
     #devolvemos un json con el nro original y su resultado multiplicado.
     return {"Original": numero, "Multiplicado": numero * multiplicar_por}
+
+@app.route('/saludar', methods=['POST'])
+def method_name():
+        cuerpo = request.json
+        return {
+            "enviaste": str(cuerpo),
+            "recibiste": "Holii"
+        }
+
+@app.route('/saludito', methods=['POST'])
+def holaaaa():
+    nombre = request.json["nombre"]
+    apellido = request.json["apellido"]
+    dia = request.json["cumpleanios"]["dia"]
+    lenguaje = request.json["lenguajes"][2]
+    return {
+        "respuesta": f"Hola {nombre} {apellido}, hiciste un post. Tu cumple es el {dia} y te gusta mucho {lenguaje}"
+    }
+
+@app.route('/persona', methods=['POST'])
+def post_persona():
+    data = request.json
+    personas = []
+    persona = {
+        "nombre": data["nombre"],
+        "edad": data["edad"]
+    }
+    personas.append(persona)
+    return{
+        "message": "Ta bien(Y)"
+    }
+
+@app.route('/route_name')
+def method_name():
+    pass
 
 # Como repetimos anteriormente, si estamos ejecutando el archivo main entonces corremos nuestro servidor. De paso le decimos que mientras corra nos debugge la ejecución. 
 if __name__ == '__main__':

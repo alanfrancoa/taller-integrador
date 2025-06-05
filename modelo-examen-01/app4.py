@@ -223,7 +223,34 @@ cantidad: la cantidad de autos registrados
 '''
 @app.route('/autos/totales', methods=['GET'])
 def autos_totales():
+    autos=Auto.query.all()
     
+    precios=[]
+    for auto in autos:
+        precios.append(auto.precio)
+
+    acumulador = 0
+
+    for precio in precios:
+        acumulador += precio
+    
+    cantidad = len(precios)
+    
+    if cantidad > 0:
+        promedio = acumulador/cantidad
+        minimo = min(precios)
+    else:
+        promedio = minimo = 0
+
+    resultado={
+        "promedio":promedio,
+        "minimo": minimo,
+        "cantidad": cantidad
+    }
+
+    return jsonify(resultado)
+
+#alans version
 
 
 if __name__ == '__main__':

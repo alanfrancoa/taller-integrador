@@ -41,6 +41,27 @@ alcanza: boolean indicando si el presupuesto cubre el precio del libro
 precio_actual: precio del libro
 precio_descuento: 80% del precio (para compras al contado)
 '''
+@app.route('/libros/presupuesto/<string:titulo>', methods=['GET'])
+def presupuesto(titulo):
+    libro = Libro.query.filter_by(titulo=titulo).first()
+    presupuesto = request.args.get('presupuesto', type=float)
+
+    if not libro:
+        jsonify({"error":"No hay libro con ese titulo"}), 404
+
+    if not presupuesto:
+        jsonify({"error":"Ingrese un presupuesto"}), 404
+
+    resultado = {
+        "titulo": libro.titulo,
+        "presupuesto": presupuesto,
+        "alcanza": presupuesto > libro.precio,
+        "precio_actual": libro.precio,
+        "precio_descuento": libro.precio * 0.8
+    }
+    
+    return jsonify(resultado)
+
 
 '''
 2)libros/actualizar/{id} (PUT)
@@ -49,6 +70,22 @@ Actualiza estos datos en el libro correspondiente.
 Retorna el objeto modificado ocultando el campo "publicado".
 Requisito: Usar Marshmallow para la serialización.
 '''
+@app.route('/libros/actualizar/<int:id>', methods=['PUT'])
+def editar(id):
+    libro=Libro.query.filter_by(id=id).first()
+
+    # Usar Marshmallow para cargar los datos de entrada
+    schema = LibroSchema(partial=True)  # partial=True permite actualización parcial
+    data = schema.load(request.get_json()) # Carga los datos del JSON, 
+
+    if 'titulo' in data:
+        libro.titulo = data['titulo']
+
+    if 'paginas' in data:
+        libro.paginas = int(data['paginas'])
+    
+    db.session.commit()
+    return LibroSchema(exclude=["id","publicado"]).dump(libro), 200
 
 '''
 3)libros/estadisticas
@@ -57,4 +94,46 @@ total_libros: cantidad total de libros registrados
 promedio_paginas: promedio de páginas de todos los libros
 libro_mas_caro: título del libro con mayor precio
 libros_publicados: cantidad de libros con campo publicado=True
+'''
+@app.route('/libros/estadisticas', methods=['GET'])
+def estadisticas():
+    libros=Libro.query.all()
+
+    cantidad_libros=len(libros)
+
+    if cantidad_libros > 0:
+        paginas_array=[libro.paginas for libro in libros]
+        paginas_total=sum(paginas_array)
+        promedio_paginas = paginas_total/cantidad_libros
+    else:
+        promedio_paginas=0
+
+    libro_caro = None
+    maximo=0
+
+    for libro in libros:
+        if libro.precio > maximo:
+            libro_caro=libro
+            maximo = libro_caro.precio
+
+    contador_publicados=0
+    for libro in libros:
+        if libro.publicado:
+            contador_publicados+=1
+
+
+    resultado={
+        "total_libros":cantidad_libros,
+        "promedio_paginas": promedio_paginas,
+        "libro_mas_caro": libro_caro.titulo,
+        "libros_publicados": contador_publicados
+    }
+    return jsonify(resultado), 200
+
+'''
+NOTAS:
+• Se asume que todas las búsquedas a la base siempre traen un resultado.
+• No es necesario realizar validaciones.
+• Las querys de SQLAlchemy solo se deben usar para traer listas de modelos, todo lo
+demás debe ser realizado de forma programática.
 '''
